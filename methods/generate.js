@@ -208,12 +208,6 @@ module.exports = async (parm) => {
     canvasPicCtx.shadowBlur = 0
     canvasPicCtx.shadowColor = 'rgba(0, 0, 0, 0)'
 
-    // write text button right
-    canvasPicCtx.fillStyle = `rgba(0, 0, 0, 0.3)`
-    canvasPicCtx.font = `${8 * parm.scale}px Noto Sans`
-    canvasPicCtx.textAlign = 'right'
-    canvasPicCtx.fillText('@QuotLyBot', canvasPic.width - 25, canvasPic.height - 25)
-
     quoteImage = await sharp(canvasPic.toBuffer()).png({ lossless: true, force: true }).toBuffer()
   } else if (type === 'stories') {
     const canvasPic = createCanvas(720, 1280)
@@ -253,7 +247,6 @@ module.exports = async (parm) => {
 
     let canvasImage = await loadImage(canvasQuote.toBuffer())
 
-    // мінімальний відступ від країв картинки
     const minPadding = 110
 
     // resize canvasImage if it is larger than canvasPic + minPadding
@@ -268,7 +261,6 @@ module.exports = async (parm) => {
       canvasImage = await loadImage(canvasImage)
     }
 
-    // розмістити canvasImage в центрі по горизонталі і вертикалі
     const imageX = (canvasPic.width - canvasImage.width) / 2
     const imageY = (canvasPic.height - canvasImage.height) / 2
 
@@ -277,14 +269,6 @@ module.exports = async (parm) => {
     canvasPicCtx.shadowOffsetX = 0
     canvasPicCtx.shadowOffsetY = 0
     canvasPicCtx.shadowBlur = 0
-
-    // write text vertical left center text
-    canvasPicCtx.fillStyle = `rgba(0, 0, 0, 0.4)`
-    canvasPicCtx.font = `${16 * parm.scale}px Noto Sans`
-    canvasPicCtx.textAlign = 'center'
-    canvasPicCtx.translate(70, canvasPic.height / 2)
-    canvasPicCtx.rotate(-Math.PI / 2)
-    canvasPicCtx.fillText('@QuotLyBot', 0, 0)
 
     quoteImage = await sharp(canvasPic.toBuffer()).png({ lossless: true, force: true }).toBuffer()
   } else {
