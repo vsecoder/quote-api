@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node app.js",
     "lint": "node_modules/.bin/eslint --ext js .",
     "lint:fix": "node_modules/.bin/eslint --fix --ext js .",
     "build": "chmod u+r+x setup.sh && ./setup.sh "
