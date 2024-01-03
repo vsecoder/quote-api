@@ -1,7 +1,7 @@
 const fs = require('fs')
 const { createCanvas, registerFont } = require('canvas')
 const EmojiDbLib = require('emoji-db')
-const { loadImage } = require('canvas')
+const { loadImage, Image } = require('canvas')
 const loadImageFromUrl = require('./image-load-url')
 const sharp = require('sharp')
 const Jimp = require('jimp')
@@ -216,6 +216,7 @@ class QuoteGenerate {
   async downloadMediaImage(media, mediaSize, type = 'id', crop = true) {
     let mediaUrl
     if (type === 'id') mediaUrl = await this.telegram.getFileLink(media).catch(console.error)
+
     else mediaUrl = media
     const load = await loadImageFromUrl(mediaUrl)
     if (mediaUrl.match(/.tgs/)) {
@@ -868,6 +869,14 @@ class QuoteGenerate {
     if (rect) canvasCtx.drawImage(rect, rectPosX, rectPosY)
     if (name) canvasCtx.drawImage(name, namePosX, namePosY)
     if (text) canvasCtx.drawImage(text, textPosX, textPosY)
+
+    //if (mediaType === 'base64') {
+    //  const img = new Image();
+    //  img.onload = () => {
+    //    canvasCtx.drawImage(this.roundImage(img, 5 * scale), mediaPosX, mediaPosY, mediaWidth, mediaHeight)
+    //  }
+    //  img.src = media;
+    //} else 
     if (media) canvasCtx.drawImage(this.roundImage(media, 5 * scale), mediaPosX, mediaPosY, mediaWidth, mediaHeight)
 
     if (replyName) {
@@ -1064,6 +1073,9 @@ class QuoteGenerate {
       if (message.media.url) {
         type = 'url'
         media = message.media.url
+      } else if (message.media.base64) {
+        type = 'base64'
+        media = message.media.base64
       } else {
         type = 'id'
         if (message.media.length > 1) {
@@ -1075,7 +1087,12 @@ class QuoteGenerate {
       maxMediaSize = width / 3 * scale
       if (message.text && maxMediaSize < textCanvas.width) maxMediaSize = textCanvas.width
 
-      mediaCanvas = await this.downloadMediaImage(media, maxMediaSize, type, crop)
+      if (type === 'base64') {
+        mediaCanvas = Buffer.from(media, 'base64')
+        mediaCanvas = await loadImage(mediaCanvas)
+      } else {
+        mediaCanvas = await this.downloadMediaImage(media, maxMediaSize, type, crop)
+      }
       mediaType = message.mediaType
     }
 
